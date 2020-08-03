@@ -1,0 +1,852 @@
+#! C:/Program Files/Nuke12.0v4/nuke-12.0.4.dll -nx
+#write_info Write1 file:"G:/Compositing_Pro/sharing_videos/Plasma_field/Render/energy_field.%03d.jpg" format:"1920 1080 1" chans:":rgba.red:rgba.green:rgba.blue:" framerange:"1 100" fps:"0" colorspace:"default (sRGB)" datatype:"8 bit" transfer:"unknown" views:"main" colorManagement:"Nuke"
+version 12.0 v4
+define_window_layout_xml {<?xml version="1.0" encoding="UTF-8"?>
+<layout version="1.0">
+    <window x="-8" y="-8" w="1920" h="1018" maximized="1" screen="0">
+        <splitter orientation="1">
+            <split size="40"/>
+            <dock id="" hideTitles="1" activePageId="Toolbar.1">
+                <page id="Toolbar.1"/>
+            </dock>
+            <split size="1257" stretch="1"/>
+            <splitter orientation="2">
+                <split size="572"/>
+                <dock id="" activePageId="Viewer.1">
+                    <page id="Viewer.1"/>
+                </dock>
+                <split size="403"/>
+                <dock id="" activePageId="DAG.1">
+                    <page id="DAG.1"/>
+                    <page id="Curve Editor.1"/>
+                    <page id="DopeSheet.1"/>
+                </dock>
+            </splitter>
+            <split size="615"/>
+            <dock id="" activePageId="Properties.1" focus="true">
+                <page id="Properties.1"/>
+                <page id="uk.co.thefoundry.backgroundrenderview.1"/>
+            </dock>
+        </splitter>
+    </window>
+</layout>
+}
+Root {
+ inputs 0
+ name G:/Compositing_Pro/sharing_videos/Plasma_field/energy_field_tutorial.nk
+ frame 31
+ format "1920 1080 0 0 1920 1080 1 HD_1080"
+ proxy_type scale
+ proxy_format "1024 778 0 0 1024 778 1 1K_Super_35(full-ap)"
+ colorManagement Nuke
+ workingSpaceLUT linear
+ monitorLut sRGB
+ int8Lut sRGB
+ int16Lut sRGB
+ logLut Cineon
+ floatLut linear
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode1
+ tile_color 0xaaaaaa00
+ label BACKGROUND_INPUT
+ note_font "Verdana Bold Italic"
+ note_font_size 120
+ xpos 198
+ ypos -1297
+ bdwidth 1420
+ bdheight 392
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode2
+ tile_color 0x8e8e3800
+ label "COPY_MOTION_VECTORS\nAND_DISTORT"
+ note_font "Verdana Bold Italic"
+ note_font_size 120
+ xpos 357
+ ypos -627
+ bdwidth 1108
+ bdheight 428
+}
+BackdropNode {
+ inputs 0
+ name BackdropNode3
+ tile_color 0x8e4332ff
+ label ENERGY_FIELD_COLOUR
+ note_font "Verdana Bold Italic"
+ note_font_size 120
+ xpos -930
+ ypos 108
+ bdwidth 1126
+ bdheight 801
+}
+Camera2 {
+ inputs 0
+ translate {0 0 5.599999905}
+ name Camera1
+ xpos -295
+ ypos -456
+}
+Noise {
+ inputs 0
+ size 154
+ zoffset {{curve x13 4.929292929 x32 6.92929293}}
+ center {960 540}
+ name Noise2
+ xpos -277
+ ypos -661
+}
+Noise {
+ inputs 0
+ size 104
+ zoffset {{curve x13 1.161616152 x31 3.16161615}}
+ center {960 540}
+ name Noise1
+ xpos -85
+ ypos -732
+}
+Copy {
+ inputs 2
+ from0 rgba.green
+ to0 rgba.green
+ name Copy1
+ xpos -85
+ ypos -666
+}
+Cylinder {
+ rotate {0 80 0}
+ uniform_scale {{curve x1 0.2 x100 1.8}}
+ name Cylinder1
+ xpos -89
+ ypos -624
+}
+ProcGeo {
+ Speed 2.8
+ name ProcGeo1
+ xpos -90
+ ypos -600
+}
+push 0
+ScanlineRender {
+ inputs 3
+ conservative_shader_sampling false
+ motion_vectors_type off
+ name ScanlineRender1
+ xpos -90
+ ypos -435
+}
+Remove {
+ operation keep
+ channels rgba
+ name Remove1
+ xpos -90
+ ypos -411
+}
+Dot {
+ name Dot1
+ xpos -56
+ ypos -364
+}
+set N5258fc00 [stack 0]
+CheckerBoard2 {
+ inputs 0
+ name CheckerBoard1
+ xpos 670
+ ypos -1117
+}
+Grade {
+ white 0.54
+ name Grade3
+ xpos 670
+ ypos -1045
+}
+Copy {
+ inputs 2
+ from0 rgba.red
+ to0 forward.u
+ from1 rgba.green
+ to1 forward.v
+ name Copy2
+ xpos 670
+ ypos -378
+}
+IDistort {
+ uv forward
+ uv_scale 40
+ name IDistort1
+ xpos 670
+ ypos -311
+}
+Remove {
+ operation keep
+ channels rgba
+ name Remove2
+ xpos 670
+ ypos -277
+}
+push $N5258fc00
+Dot {
+ name Dot2
+ xpos -73
+ ypos 308
+}
+EdgeDetectWrapper {
+ name EdgeDetect1
+ xpos -107
+ ypos 367
+}
+Grade {
+ channels alpha
+ gamma 0.3
+ name Grade1
+ xpos -107
+ ypos 401
+}
+Clamp {
+ name Clamp1
+ xpos -107
+ ypos 435
+}
+Blur {
+ size 0.75
+ name Blur1
+ xpos -107
+ ypos 469
+}
+set N43a63800 [stack 0]
+Shuffle {
+ red alpha
+ green alpha
+ blue alpha
+ name Shuffle1
+ xpos -107
+ ypos 517
+}
+Keyer {
+ operation "luminance key"
+ range {0.6750397717 1 1 1}
+ name Keyer1
+ xpos -107
+ ypos 551
+}
+push $N43a63800
+Constant {
+ inputs 0
+ channels rgb
+ color {0.4444999993 0.6760001183 1.039499998 0}
+ name Constant1
+ xpos -444
+ ypos 321
+}
+Copy {
+ inputs 2
+ from0 rgba.alpha
+ to0 rgba.alpha
+ name Copy3
+ xpos -444
+ ypos 467
+}
+Grade {
+ inputs 1+1
+ white 2.46
+ multiply 1.26
+ name Grade2
+ xpos -444
+ ypos 556
+}
+Premult {
+ name Premult1
+ xpos -444
+ ypos 613
+}
+Group {
+ name EXPOENENTIAL_GLOW2
+ help "This gizmo is a port of Stuart Lashley's popular Exponential Glow macro from Shake. Will glow the highs on the input and create a nice falloff. Main dependency with Viewer has been removed so should be ok in stereo/mono views."
+ xpos -444
+ ypos 661
+ addUserKnob {20 User l "Exponential Glow"}
+ addUserKnob {41 falloff l Falloff T ExpoGlow.falloff}
+ addUserKnob {7 intensity l Intensity R 0 10}
+ intensity 1.7
+ addUserKnob {41 blur_amount l Size T ExpoGlow.blur_amount}
+ addUserKnob {41 add_source l "Add Source" T ExpoGlow.add_source}
+ addUserKnob {6 cropformat l "Crop to format" +STARTLINE}
+ cropformat true
+ addUserKnob {26 info l INVISIBLE +INVISIBLE T "Ported from Shake by brad-f"}
+}
+ Input {
+  inputs 0
+  name Input1
+  xpos -239
+  ypos -731
+ }
+ NoOp {
+  name ExpoGlow
+  selected true
+  xpos -239
+  ypos -607
+  addUserKnob {20 User}
+  addUserKnob {7 falloff l Falloff R 0 2}
+  falloff 0.89
+  addUserKnob {7 intensity l Intensity R 0 5}
+  intensity {{parent.intensity*10}}
+  addUserKnob {7 blur_amount l Size R 0 5}
+  blur_amount 4.06
+  addUserKnob {6 add_source l "Add Source" +STARTLINE}
+  add_source true
+  addUserKnob {6 add_bbox l "Add original bbox" +STARTLINE}
+ }
+set N49efb800 [stack 0]
+ Dot {
+  name Dot12
+  xpos -342
+  ypos -602
+ }
+push $N49efb800
+ Dot {
+  name Dot11
+  xpos -31
+  ypos -602
+ }
+ Keyer {
+  operation "luminance key"
+  name Keyer1
+  xpos 43
+  ypos -472
+ }
+ Premult {
+  name Premult1
+  xpos 21
+  ypos -409
+ }
+ Remove {
+  operation keep
+  channels rgb
+  name Remove1
+  xpos 12
+  ypos -365
+ }
+ Grade {
+  white {{ExpoGlow.intensity/100 i}}
+  name Grade1
+  xpos 36
+  ypos -321
+ }
+ Dot {
+  name Dot3
+  xpos -31
+  ypos -198
+ }
+set N45d3fc00 [stack 0]
+ Dot {
+  name Dot2
+  xpos 79
+  ypos -198
+ }
+set N45d3f800 [stack 0]
+ Dot {
+  name Dot4
+  xpos 199
+  ypos -198
+ }
+set N45d3f400 [stack 0]
+ Dot {
+  name Dot5
+  xpos 309
+  ypos -198
+ }
+set N45d3f000 [stack 0]
+ Dot {
+  name Dot6
+  xpos 419
+  ypos -198
+ }
+set N45d3ec00 [stack 0]
+ Dot {
+  name Dot7
+  xpos 529
+  ypos -198
+ }
+set N45d3e800 [stack 0]
+ Dot {
+  name Dot8
+  xpos 639
+  ypos -198
+ }
+set N45d3e400 [stack 0]
+ Dot {
+  name Dot9
+  xpos 746
+  ypos -198
+ }
+set N45d3e000 [stack 0]
+ Dot {
+  name Dot10
+  xpos 856
+  ypos -198
+ }
+ Group {
+  name ShakePercentBlur8
+  xpos 753
+  ypos -29
+  addUserKnob {20 percentBlur l "Percent Blur"}
+  addUserKnob {41 xpercent l xPercent T Blur120.xpercent}
+  addUserKnob {41 ypercent l yPercent T Blur120.ypercent}
+ }
+  Input {
+   inputs 0
+   name Input1
+   xpos 514
+   ypos -229
+  }
+  Blur {
+   size {{width/3*(xpercent/100) x1001 6.826666667e+10} {height/3*(ypercent/100)}}
+   crop false
+   name Blur120
+   xpos 514
+   ypos -189
+   addUserKnob {20 User}
+   addUserKnob {7 xpercent l xPercent R 0 100}
+   xpercent {{ShakePercentBlur7.xpercent*2 i}}
+   addUserKnob {7 ypercent l yPercent R 0 100}
+   ypercent {{xpercent/format.pixel_aspect/height*width}}
+  }
+  Output {
+   name Output1
+   xpos 514
+   ypos -89
+  }
+ end_group
+ Multiply {
+  value {{Multiply8.value/ExpoGlow.falloff i}}
+  name Multiply9
+  xpos 230
+  ypos 494
+ }
+push $N45d3e000
+ Group {
+  name ShakePercentBlur7
+  xpos 627
+  ypos -32
+  addUserKnob {20 percentBlur l "Percent Blur"}
+  addUserKnob {41 xpercent l xPercent T Blur120.xpercent}
+  addUserKnob {41 ypercent l yPercent T Blur120.ypercent}
+ }
+  Input {
+   inputs 0
+   name Input1
+   xpos 514
+   ypos -229
+  }
+  Blur {
+   size {{width/3*(xpercent/100) x1001 6.826666667e+10} {height/3*(ypercent/100)}}
+   crop false
+   name Blur120
+   xpos 514
+   ypos -189
+   addUserKnob {20 User}
+   addUserKnob {7 xpercent l xPercent R 0 100}
+   xpercent {{ShakePercentBlur6.xpercent*2 i}}
+   addUserKnob {7 ypercent l yPercent R 0 100}
+   ypercent {{xpercent/format.pixel_aspect/height*width}}
+  }
+  Output {
+   name Output1
+   xpos 514
+   ypos -89
+  }
+ end_group
+ Multiply {
+  value {{Multiply7.value/ExpoGlow.falloff i}}
+  name Multiply8
+  xpos 106
+  ypos 366
+ }
+push $N45d3e400
+ Group {
+  name ShakePercentBlur6
+  xpos 511
+  ypos -11
+  addUserKnob {20 percentBlur l "Percent Blur"}
+  addUserKnob {41 xpercent l xPercent T Blur120.xpercent}
+  addUserKnob {41 ypercent l yPercent T Blur120.ypercent}
+ }
+  Input {
+   inputs 0
+   name Input1
+   xpos 514
+   ypos -229
+  }
+  Blur {
+   size {{width/3*(xpercent/100) x1001 6.826666667e+10} {height/3*(ypercent/100)}}
+   crop false
+   name Blur120
+   xpos 514
+   ypos -189
+   addUserKnob {20 User}
+   addUserKnob {7 xpercent l xPercent R 0 100}
+   xpercent {{ShakePercentBlur5.xpercent*2 i}}
+   addUserKnob {7 ypercent l yPercent R 0 100}
+   ypercent {{xpercent/format.pixel_aspect/height*width}}
+  }
+  Output {
+   name Output1
+   xpos 514
+   ypos -89
+  }
+ end_group
+ Multiply {
+  value {{Multiply6.value/ExpoGlow.falloff i}}
+  name Multiply7
+  xpos 117
+  ypos 279
+ }
+push $N45d3e800
+ Group {
+  name ShakePercentBlur5
+  xpos 401
+  ypos -31
+  addUserKnob {20 percentBlur l "Percent Blur"}
+  addUserKnob {41 xpercent l xPercent T Blur120.xpercent}
+  addUserKnob {41 ypercent l yPercent T Blur120.ypercent}
+ }
+  Input {
+   inputs 0
+   name Input1
+   xpos 514
+   ypos -229
+  }
+  Blur {
+   size {{width/3*(xpercent/100) x1001 6.826666667e+10} {height/3*(ypercent/100)}}
+   crop false
+   name Blur120
+   xpos 514
+   ypos -189
+   addUserKnob {20 User}
+   addUserKnob {7 xpercent l xPercent R 0 100}
+   xpercent {{ShakePercentBlur4.xpercent*2 i}}
+   addUserKnob {7 ypercent l yPercent R 0 100}
+   ypercent {{xpercent/format.pixel_aspect/height*width}}
+  }
+  Output {
+   name Output1
+   xpos 514
+   ypos -89
+  }
+ end_group
+ Multiply {
+  value {{Multiply5.value/ExpoGlow.falloff i}}
+  name Multiply6
+  xpos 40
+  ypos 209
+ }
+push $N45d3ec00
+ Group {
+  name ShakePercentBlur4
+  xpos 288
+  ypos -26
+  addUserKnob {20 percentBlur l "Percent Blur"}
+  addUserKnob {41 xpercent l xPercent T Blur120.xpercent}
+  addUserKnob {41 ypercent l yPercent T Blur120.ypercent}
+ }
+  Input {
+   inputs 0
+   name Input1
+   xpos 514
+   ypos -229
+  }
+  Blur {
+   size {{width/3*(xpercent/100) x1001 6.826666667e+10} {height/3*(ypercent/100)}}
+   crop false
+   name Blur120
+   xpos 514
+   ypos -189
+   addUserKnob {20 User}
+   addUserKnob {7 xpercent l xPercent R 0 100}
+   xpercent {{ShakePercentBlur3.xpercent*2 i}}
+   addUserKnob {7 ypercent l yPercent R 0 100}
+   ypercent {{xpercent/format.pixel_aspect/height*width}}
+  }
+  Output {
+   name Output1
+   xpos 514
+   ypos -89
+  }
+ end_group
+ Multiply {
+  value {{Multiply4.value/ExpoGlow.falloff i}}
+  name Multiply5
+  xpos -9
+  ypos 145
+ }
+push $N45d3f000
+ Group {
+  name ShakePercentBlur3
+  xpos 185
+  ypos 9
+  addUserKnob {20 percentBlur l "Percent Blur"}
+  addUserKnob {41 xpercent l xPercent T Blur120.xpercent}
+  addUserKnob {41 ypercent l yPercent T Blur120.ypercent}
+ }
+  Input {
+   inputs 0
+   name Input1
+   xpos 514
+   ypos -229
+  }
+  Blur {
+   size {{width/3*(xpercent/100) x1001 6.826666667e+10} {height/3*(ypercent/100)}}
+   crop false
+   name Blur120
+   xpos 514
+   ypos -189
+   addUserKnob {20 User}
+   addUserKnob {7 xpercent l xPercent R 0 100}
+   xpercent {{ShakePercentBlur2.xpercent*2 i}}
+   addUserKnob {7 ypercent l yPercent R 0 100}
+   ypercent {{xpercent/format.pixel_aspect/height*width}}
+  }
+  Output {
+   name Output1
+   xpos 514
+   ypos -89
+  }
+ end_group
+ Multiply {
+  value {{Multiply3.value/ExpoGlow.falloff i}}
+  name Multiply4
+  xpos -165
+  ypos 127
+ }
+push $N45d3f400
+ Group {
+  name ShakePercentBlur2
+  xpos 72
+  ypos -28
+  addUserKnob {20 percentBlur l "Percent Blur"}
+  addUserKnob {41 xpercent l xPercent T Blur120.xpercent}
+  addUserKnob {41 ypercent l yPercent T Blur120.ypercent}
+ }
+  Input {
+   inputs 0
+   name Input1
+   xpos 514
+   ypos -229
+  }
+  Blur {
+   size {{width/3*(xpercent/100) x1001 6.826666667e+10} {height/3*(ypercent/100)}}
+   crop false
+   name Blur120
+   xpos 514
+   ypos -189
+   addUserKnob {20 User}
+   addUserKnob {7 xpercent l xPercent R 0 100}
+   xpercent {{ShakePercentBlur1.xpercent*2 i}}
+   addUserKnob {7 ypercent l yPercent R 0 100}
+   ypercent {{xpercent/format.pixel_aspect/height*width}}
+  }
+  Output {
+   name Output1
+   xpos 514
+   ypos -89
+  }
+ end_group
+ Multiply {
+  value {{Multiply2.value/ExpoGlow.falloff i}}
+  name Multiply3
+  xpos -180
+  ypos 46
+ }
+push $N45d3f800
+ Group {
+  name ShakePercentBlur1
+  xpos -95
+  ypos -25
+  addUserKnob {20 percentBlur l "Percent Blur"}
+  addUserKnob {41 xpercent l xPercent T Blur120.xpercent}
+  addUserKnob {41 ypercent l yPercent T Blur120.ypercent}
+ }
+  Input {
+   inputs 0
+   name Input1
+   xpos 514
+   ypos -229
+  }
+  Blur {
+   size {{width/3*(xpercent/100) x1001 6.826666667e+10} {height/3*(ypercent/100)}}
+   crop false
+   name Blur120
+   xpos 514
+   ypos -189
+   addUserKnob {20 User}
+   addUserKnob {7 xpercent l xPercent R 0 100}
+   xpercent {{ShakePercentBlur.xpercent*2 i}}
+   addUserKnob {7 ypercent l yPercent R 0 100}
+   ypercent {{xpercent/format.pixel_aspect/height*width}}
+  }
+  Output {
+   name Output1
+   xpos 514
+   ypos -89
+  }
+ end_group
+ Multiply {
+  value {{Multiply1.value/ExpoGlow.falloff i}}
+  name Multiply2
+  xpos -239
+  ypos -4
+ }
+push $N49efb800
+push $N45d3fc00
+ Group {
+  name ShakePercentBlur
+  xpos -180
+  ypos -84
+  addUserKnob {20 percentBlur l "Percent Blur"}
+  addUserKnob {41 xpercent l xPercent T Blur120.xpercent}
+  addUserKnob {41 ypercent l yPercent T Blur120.ypercent}
+ }
+  Input {
+   inputs 0
+   name Input1
+   xpos 514
+   ypos -229
+  }
+  Blur {
+   size {{width/3*(xpercent/100) x1001 6.826666667e+10} {height/3*(ypercent/100)}}
+   crop false
+   name Blur120
+   xpos 514
+   ypos -189
+   addUserKnob {20 User}
+   addUserKnob {7 xpercent l xPercent R 0 100}
+   xpercent {{ExpoGlow.blur_amount i}}
+   addUserKnob {7 ypercent l yPercent R 0 100}
+   ypercent {{xpercent/format.pixel_aspect/height*width}}
+  }
+  Output {
+   name Output1
+   xpos 514
+   ypos -89
+  }
+ end_group
+ Multiply {
+  name Multiply1
+  xpos -328
+  ypos -91
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge1
+  xpos -490
+  ypos -75
+  disable {{!ExpoGlow.add_source i}}
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge2
+  xpos -371
+  ypos 34
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge3
+  xpos -318
+  ypos 104
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge4
+  xpos -283
+  ypos 199
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge5
+  xpos -142
+  ypos 245
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge6
+  xpos -118
+  ypos 309
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge7
+  xpos -118
+  ypos 395
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge8
+  xpos -30
+  ypos 458
+ }
+ Merge2 {
+  inputs 2
+  operation plus
+  name Merge9
+  xpos 22
+  ypos 583
+ }
+ Crop {
+  box {0 0 {width i} {height i}}
+  name Crop1
+  xpos -273
+  ypos 713
+  disable {{!(parent.cropformat) i}}
+ }
+ Output {
+  name Output1
+  xpos -239
+  ypos 781
+ }
+end_group
+Dot {
+ name Dot3
+ xpos -410
+ ypos 841
+}
+Merge2 {
+ inputs 2
+ operation plus
+ name Merge1
+ xpos 670
+ ypos 838
+}
+set N3c2f7800 [stack 0]
+push 0
+Viewer {
+ inputs 2
+ frame_range 13-32
+ frame_range_lock true
+ input_number 1
+ colour_sample_bbox {-0.1270833313 0.08958332986 -0.1260416657 0.09062500298}
+ name Viewer1
+ xpos 670
+ ypos 1170
+}
+push $N3c2f7800
+Write {
+ file G:/Compositing_Pro/sharing_videos/Plasma_field/Render/energy_field.###.jpg
+ file_type jpeg
+ _jpeg_quality 1
+ checkHashOnRead false
+ version 1
+ name Write1
+ selected true
+ xpos 670
+ ypos 960
+}
