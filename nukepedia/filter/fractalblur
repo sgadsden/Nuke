@@ -2,165 +2,271 @@ set cut_paste_input [stack 0]
 version 11.2 v4
 push $cut_paste_input
 Group {
- name FractalBlur1
- tile_color 0xcc804eff
- note_font "Verdana Bold Bold Bold Bold"
- note_font_color 0xff
+ name Fractal_Blur
  selected true
- xpos 10833
- ypos 1147
- addUserKnob {20 tb_user l FractalBlur}
- addUserKnob {4 mu l Output M {Result "Noise Map"}}
- addUserKnob {20 NoiseA n 1}
- addUserKnob {41 size l x/ysize T Noise1.size}
- addUserKnob {41 zoffset l z T Noise1.zoffset}
- addUserKnob {41 gain T Noise1.gain}
- addUserKnob {41 gamma T Noise1.gamma}
- addUserKnob {20 endGroup n -1}
- addUserKnob {20 NoiseB n 1}
- addUserKnob {41 size_1 l x/ysize T Noise2.size}
- addUserKnob {41 zoffset_1 l z T Noise2.zoffset}
- addUserKnob {41 gain_1 l gain T Noise2.gain}
- addUserKnob {41 gamma_1 l gamma T Noise2.gamma}
- addUserKnob {20 endGroup_1 l endGroup n -1}
+ xpos 1714
+ ypos -349
+ addUserKnob {20 User}
+ addUserKnob {4 output l Output M {rgba alpha}}
+ output alpha
  addUserKnob {26 ""}
- addUserKnob {41 uv_offset l "Distort Offset" T IDistort1.uv_offset}
- addUserKnob {41 uv_scale l "Distort Scale" T IDistort1.uv_scale}
- addUserKnob {41 smooth l Smooth T Blur3.size}
- addUserKnob {41 channels l "Distort Channels" T IDistort1.channels}
+ addUserKnob {7 FractalBlur_UserDilate l Spread R 0 200}
+ FractalBlur_UserDilate 152
+ addUserKnob {7 FractalBlur_UserGrainSize l "Grain Size" R 0 100}
+ FractalBlur_UserGrainSize 222
+ addUserKnob {7 FractalBlur_UserContrast l Contrast}
+ addUserKnob {7 FractalBlur_UserGamma l Gamma R 0 5}
+ FractalBlur_UserGamma 1
+ addUserKnob {6 FractalBlur_UserBlackWhite l "Make black and white" +STARTLINE}
+ addUserKnob {7 FractalBlur_UserThreshold l Threshold}
+ addUserKnob {6 FractalBlur_UserBW l "Clamp output" +STARTLINE}
+ FractalBlur_UserBW true
  addUserKnob {26 ""}
- addUserKnob {41 size_2 l "Blur Size" T Blur1.size}
+ addUserKnob {7 FractalBlur_UserGrainEvolve l "Grain Evolution" t "Keyframe this value to animate the grain" R 0 10}
+ FractalBlur_UserGrainEvolve 1
  addUserKnob {26 ""}
+ addUserKnob {26 instructions l "" +STARTLINE T "Plug a texture into Input2 to use that instead of noise"}
+ addUserKnob {26 ""}
+ addUserKnob {26 FractalBlur_Credit l "" +STARTLINE T "Fractal Blur v1.9 by Richard Frazer - www.richardfrazer.com\nmod-v1 by Holger Hummel - www.celluloid-vfx.com"}
 }
  Input {
   inputs 0
-  name Input
-  xpos -433
-  ypos -589
+  name TEXTURE
+  selected true
+  xpos 1874
+  ypos -423
+  number 1
  }
-set Na9626700 [stack 0]
- Remove {
-  name Remove1
-  label "\[value channels]"
-  xpos -630
-  ypos -598
+ Dot {
+  name Dot2
+  selected true
+  xpos 1908
+  ypos -118
  }
-set Na9626380 [stack 0]
- Noise {
-  size 1000
-  center {1024 778}
-  name Noise2
-  xpos -573
-  ypos -515
+set N38e09500 [stack 0]
+ Input {
+  inputs 0
+  name ALPHA
+  selected true
+  xpos 1249
+  ypos -506
  }
- Shuffle {
-  green black
-  blue black
-  alpha black
-  name R
-  tile_color 0xff0000ff
-  xpos -573
-  ypos -491
+ Dot {
+  name Dot4
+  selected true
+  xpos 1283
+  ypos -413
  }
-push $Na9626380
- Noise {
-  center {1024 778}
-  name Noise1
-  xpos -684
-  ypos -515
+set N38e09c00 [stack 0]
+ Dot {
+  name Dot3
+  selected true
+  xpos 1550
+  ypos -370
+ }
+set N91d2000 [stack 0]
+ Dot {
+  name Dot1
+  selected true
+  xpos 1748
+  ypos -370
  }
  Shuffle {
   red black
+  green black
   blue black
   alpha black
-  name G
-  tile_color 0x7fff00ff
-  xpos -684
-  ypos -491
+  name Shuffle10
+  selected true
+  xpos 1714
+  ypos -255
  }
+ Noise {
+  cliptype none
+  size {{"\[value FractalBlur_UserGrainSize]" i}}
+  zoffset {{"\[value FractalBlur_UserGrainEvolve]" i}}
+  center {1024 778}
+  name Noise1
+  selected true
+  xpos 1714
+  ypos -166
+ }
+set N91d2a80 [stack 0]
+ Switch {
+  inputs 2
+  which {{"\[exists parent.input1]"}}
+  name Switch3
+  selected true
+  xpos 1714
+  ypos -122
+ }
+ Invert {
+  name Invert4
+  selected true
+  xpos 1714
+  ypos -72
+ }
+push $N91d2000
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle1
+  selected true
+  xpos 1516
+  ypos -333
+ }
+ Blur {
+  size {{"\[value FractalBlur_UserDilate]" i x101 0}}
+  name Blur1
+  selected true
+  xpos 1516
+  ypos -283
+ }
+ FilterErode {
+  channels rgba
+  size {{"(-\[value FractalBlur_UserDilate])/2" i x1 0}}
+  filter gaussian
+  name FilterErode7
+  selected true
+  xpos 1516
+  ypos -216
+ }
+ Dot {
+  name Dot10
+  selected true
+  xpos 1550
+  ypos -133
+ }
+set N329a4380 [stack 0]
  Merge2 {
   inputs 2
-  operation plus
-  name Merge1
-  xpos -632
-  ypos -438
+  operation minus
+  name Merge2
+  selected true
+  xpos 1660
+  ypos -6
  }
- Blur {
+ Invert {
+  name Invert3
+  selected true
+  xpos 1660
+  ypos 37
+ }
+push $N329a4380
+ Merge2 {
+  inputs 2
+  operation multiply
+  name Merge13
+  selected true
+  xpos 1516
+  ypos 72
+ }
+set N329a4e00 [stack 0]
+ Clamp {
+  name Clamp1
+  selected true
+  xpos 1408
+  ypos 116
+ }
+ Grade {
   channels rgba
-  name Blur3
-  xpos -632
-  ypos -401
+  blackpoint {{FractalBlur_UserThreshold i}}
+  whitepoint {{FractalBlur_UserThreshold i}}
+  name Grade1
+  selected true
+  xpos 1408
+  ypos 195
  }
-set Na9968700 [stack 0]
- Dot {
-  name Dot2
-  xpos -601
-  ypos -80
+push $N329a4e00
+ Switch {
+  inputs 2
+  which {{FractalBlur_UserBlackWhite i x47 1}}
+  name Switch1
+  selected true
+  xpos 1516
+  ypos 249
  }
-push $Na9626700
- Dot {
-  name Dot1
-  xpos -254
-  ypos -401
- }
- Blur {
+ Grade {
   channels rgba
-  size {{parent.Blur1.size}}
-  name Blur2
-  xpos -285
-  ypos -239
+  blackpoint {{FractalBlur_UserContrast}}
+  whitepoint {{1-FractalBlur_UserContrast}}
+  gamma {{FractalBlur_UserGamma x101 0.985}}
+  black_clamp false
+  name Grade5
+  selected true
+  xpos 1516
+  ypos 329
  }
-push $Na9968700
-push $Na9626700
+set N329a5c00 [stack 0]
+ Clamp {
+  name Clamp2
+  selected true
+  xpos 1426
+  ypos 394
+ }
+push $N329a5c00
+ Switch {
+  inputs 2
+  which {{FractalBlur_UserBW x47 0}}
+  name Switch2
+  selected true
+  xpos 1516
+  ypos 466
+ }
+ Dot {
+  name Dot6
+  selected true
+  xpos 1550
+  ypos 545
+ }
+set N3cc1c700 [stack 0]
+ Shuffle {
+  red alpha
+  green alpha
+  blue alpha
+  name Shuffle2
+  selected true
+  xpos 1516
+  ypos 619
+ }
+push $N3cc1c700
+push $N38e09c00
  ShuffleCopy {
   inputs 2
-  red red
-  green green
-  blue blue
-  out motion
-  name rgb2motion
-  xpos -433
-  ypos -401
+  name ShuffleCopy1
+  selected true
+  xpos 1249
+  ypos 575
  }
- IDistort {
-  channels rgba
-  uv motion
-  uv_scale 50
-  name IDistort1
-  xpos -433
-  ypos -360
- }
- Remove {
-  channels motion
-  name Remove2
-  label "\[value channels]"
-  xpos -433
-  ypos -315
- }
- Blur {
-  channels rgba
-  size 12
-  name Blur1
-  xpos -433
-  ypos -239
- }
- CopyBBox {
-  inputs 2
-  name CopyBBox1
-  xpos -433
-  ypos -170
+ Dot {
+  name Dot5
+  selected true
+  xpos 1283
+  ypos 636
  }
  Switch {
   inputs 2
-  which {{mu}}
-  name Switch1
-  label "\[value which]"
-  xpos -433
-  ypos -84
+  which {{parent.output}}
+  name Switch5
+  selected true
+  xpos 1516
+  ypos 751
  }
  Output {
   name Output1
-  xpos -433
-  ypos -28
+  selected true
+  xpos 1516
+  ypos 851
+ }
+push $N38e09500
+push $N91d2a80
+ Switch {
+  inputs 2
+  which {{parent.altInput}}
+  name Switch4
+  selected true
+  xpos 1874
+  ypos -65
  }
 end_group
